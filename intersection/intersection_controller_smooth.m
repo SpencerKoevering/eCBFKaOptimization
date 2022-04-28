@@ -13,17 +13,16 @@ function [result] = intersection_controller_smooth(x, cars, ref, Ts, l_er, l_ef,
     nlobj.Model.NumberOfParameters = 1;
     nlobj.Model.StateFcn="kinematicbicyclefcn";
     nlobj.Optimization.ReplaceStandardCost = false;
-    
-    % validateFcns(nlobj,x0,u0, [], {Ts});
+
     
     maxacc=1;
     max_angle=pi/4;
-    maxB=atan(1/2*tan(max_angle)); %max steering angle is enforced through B. this value corresponds to pi/2 max
+    maxB=atan(1/2*tan(max_angle));
     
-    nlobj.MV(1).Min = -maxacc;      %
-    nlobj.MV(1).Max = maxacc;       %
-    nlobj.MV(2).Min = -maxB;   % 
-    nlobj.MV(2).Max = maxB;    %
+    nlobj.MV(1).Min = -maxacc;
+    nlobj.MV(1).Max = maxacc;
+    nlobj.MV(2).Min = -maxB;
+    nlobj.MV(2).Max = maxB;
     nlobj.States(4).Min = -1;      
     nlobj.States(4).Max = 1;
     if initlane(1)==1
@@ -40,10 +39,6 @@ function [result] = intersection_controller_smooth(x, cars, ref, Ts, l_er, l_ef,
     nloptions = nlmpcmoveopt;
     nloptions.Parameters = {Ts};
 
-
-
-
-%     options =  optimset('Display','iter');
     options =  optimset('Display','off');
     dt_dyn=.2;
     mv=u0;
@@ -100,7 +95,6 @@ function [result] = intersection_controller_smooth(x, cars, ref, Ts, l_er, l_ef,
                 psihistory(m, c) = cars(m).State(3);
             end
         end
-        % Compute optimal control moves
         yref = ref(:,ref_index)';
         nextx = zeros(1,length(cars));
         nexty = zeros(1,length(cars));
@@ -114,7 +108,6 @@ function [result] = intersection_controller_smooth(x, cars, ref, Ts, l_er, l_ef,
         end
         nlobj.Optimization.CustomCostFcn = @(X,U,e,data,params)  sum(vectorstep(diag(realsqrt(diag(nextx-X(2,1))^2 + diag(nexty-X(2,2))^2)), distance_obj, weight));
         [mv,nloptions] = nlmpcmove(nlobj,x,mv,yref,[],nloptions);
-        % Implement first optimal control move
         psi = x(3);
         v = x(4);
         f = [v*cos(psi); v*sin(psi);0;0;];
@@ -179,7 +172,6 @@ function [result] = intersection_controller_smooth(x, cars, ref, Ts, l_er, l_ef,
                 end
             end
         end
-%         c
         c=c+1;
     end
 
@@ -229,8 +221,5 @@ function ret = vectorstep(x, det_dist, weight)
             x(n) = -weight*x(n) + det_dist*weight;
         end
     end
-%     for n=1:length(x)
-%             x(n) = -weight*x(n);
-%     end
     ret = x;
 end

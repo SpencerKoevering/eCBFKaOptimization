@@ -215,7 +215,6 @@ function [result] = first_degree_sol(x, cars, merge_point, abs_target_speed, fc,
                 target_y = target_merge_y;
                 merging= true;
             elseif c>2 && (exitflag < 0||isempty(input)) && ~merging
-%                 disp("infeasible high constraint QP, defaulting to front car only")    
             [originput,fval,exitflag,output] = quadprog(H, F, Constraint_A_pre, Constraint_b_pre, [], [], [], [], [], options);
             input = originput.';
             end
@@ -326,23 +325,6 @@ function [result] = first_degree_sol(x, cars, merge_point, abs_target_speed, fc,
     result = [success;epoch_merge_completed;];
     name = ['1d' num2str(exp_epoch) '.mat'];
     save(name, 'history', 'xhistory', 'yhistory', 'psihistory');
-    %%plotting
-%     t = 1:max_epochs;
-%     
-%     figure();
-%     plot(t, history(4,:));
-%     xlabel('time'); ylabel('ego velocity');
-% 
-% 
-%     figure();
-%     plot(t, history(2,:));
-%     xlabel('time'); ylabel('ego positiony');
-% 
-%     figure();
-%     plot(t, history(3,:));
-%     xlabel('time'); ylabel('ego psi');
-%     
-%     plotBehavior(history, xhistory, yhistory, psihistory);
 
 end
 

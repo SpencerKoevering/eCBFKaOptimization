@@ -21,13 +21,6 @@ for c=1:numtrials
     abs_target_speed=(2).*rand()+.25;
     merge_point=(50).*rand()+10;
 
-%     fc = car([15, -1, 0, 1.2].', 1, 1);
-%     ft = car([10, 1, 0, 1.1].', 1, 1);
-%     bt = car([-10, 1, 0, 1].', 1, 1);
-%     x=[0 -1 0 1].';
-%     abs_target_speed=2;
-%     merge_point=10;
-
     cars = [fc ft bt];
     fci=1;
     fti=2;

@@ -70,8 +70,6 @@ function [result] = exponential_fmincon_Prob_const(x, cars, merge_point, abs_tar
         if c==1
             updateKa=true;
         end
-%         disp(c);
-%         xpos = x(1);
         y = x(2);
         psi = x(3);
         v = x(4);
@@ -156,7 +154,6 @@ function [result] = exponential_fmincon_Prob_const(x, cars, merge_point, abs_tar
                 target_y = target_merge_y;
                 merging= true;
             elseif c>2 && exitflag == -2 && ~merging
-%                 disp("infeasible high constraint QP, defaulting to front car only")
                 [originput,fval,exitflag,output] = doFmincon_const(objective_fun,Constraint_A,Constraint_b, options, x, fc.State, ft.State, bt.State, l_er, l_ef, l_fcr, l_fcf, l_ftr, l_ftf, l_btr, l_btf, 0, 0, 0, 0, 0, 0, isfc, false, false, ego_epsilonx_mean, ego_epsilonx_stdev, other_epsilonx_mean, other_epsilonx_stdev, confidence, rval, prev_alphafc, prev_alphaft, prev_alphabt, false);
                 input = originput.';
                 if exitflag == 1 || 2
@@ -188,15 +185,8 @@ function [result] = exponential_fmincon_Prob_const(x, cars, merge_point, abs_tar
         end
 
         if c>2 && exitflag == -2
-%             if rval==0
-%                 disp('unable to compensate');
                 unable_to_compensate=true;
                 break;
-%             else
-%                 disp('QP infeasible, retrying with lower r')
-%                 rval=rval-.5;
-%                 continue;
-%             end
         end
         rval=r;
 
@@ -208,21 +198,16 @@ function [result] = exponential_fmincon_Prob_const(x, cars, merge_point, abs_tar
 
         x = x+ f+g*input;
         for m=1:length(cars)
-    %         cars(m).State=cars(m).increment_prob(0,0, other_epsilonx_mean, other_epsilonx_stdev, other_epsilony_mean, other_epsilony_stdev);
             cars(m).State=cars(m).increment_probx(0,0, other_epsilonx_mean, other_epsilonx_stdev);
         end
         fc = cars(fci);
         ft = cars(fti);
         bt = cars(bti);
- %         if isfc && abs(fc.State(1)-x(1)) - (fc.l_r+l_ef) <= 0 && abs(x(2)-fc.State(2)) <= 1
         if isIntersection(x, fc.State, l_ef, l_er, l_fcf, l_fcr, .5, .5)
-%           disp('collided with fc')
           collided=true;
           break
         end
-%         if isft && abs(ft.State(1)-x(1)) - (ft.l_r+l_ef) <= 0 && abs(x(2)-ft.State(2)) <= 1
         if isIntersection(x, ft.State, l_ef, l_er, l_ftf, l_ftr, .5, .5)
-%           disp('collided with ft')
           collided=true;
           break
         elseif isft && ft.State(1)-x(1) < 0
@@ -236,9 +221,7 @@ function [result] = exponential_fmincon_Prob_const(x, cars, merge_point, abs_tar
                 end
             end
         end
-%         if isbt && (abs(x(1)-bt.State(1)) - (l_er+bt.l_f) <= 0 && abs(x(2)-bt.State(2)) <= 1)
         if isIntersection(x, ft.State, l_ef, l_er, l_btf, l_btr, .5, .5)
-%             disp('collided with bt')
             collided=true;
             break
         elseif isbt && (x(1)-bt.State(1) < 0)
@@ -297,21 +280,5 @@ function [result] = exponential_fmincon_Prob_const(x, cars, merge_point, abs_tar
     
     name = ['prob_const' num2str(exp_epoch) '.mat'];
     save(name, 'history', 'xhistory', 'yhistory', 'psihistory');
-    %%plotting
-%     t = 1:max_epochs;
-%     plotBehavior(history, xhistory, yhistory, psihistory);
-% 
-%     figure();
-%     plot(t, history(4,:));
-%     xlabel('time'); ylabel('ego velocity');
-% 
-% 
-%     figure();
-%     plot(t, history(2,:));
-%     xlabel('time'); ylabel('ego positiony');
-% 
-%     figure();
-%     plot(t, history(3,:));
-%     xlabel('time'); ylabel('ego psi');
 end
 

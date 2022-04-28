@@ -1,5 +1,4 @@
 function plotBehavior(ego, carsx, carsy, carspsi, name, speed, intersection)
-%     try
         if ~isempty(carsx)
             scenario = drivingScenario('SampleTime', .1, 'StopTime', 1);
 
@@ -29,8 +28,8 @@ function plotBehavior(ego, carsx, carsy, carspsi, name, speed, intersection)
 
             pause(.01);
 
-            myVideo = VideoWriter(name); %open video file
-            myVideo.FrameRate = 10;  %can adjust this, 5 - 10 works well for me
+            myVideo = VideoWriter(name);
+            myVideo.FrameRate = 10;
             open(myVideo);
 
             for c=1:xhistsize
@@ -45,7 +44,7 @@ function plotBehavior(ego, carsx, carsy, carspsi, name, speed, intersection)
                 xlim([-50+egoCar.Position(1) 50+egoCar.Position(1)]);
                 ylim([-50+egoCar.Position(2) 50+egoCar.Position(2)]);
                 pause(.05 * 1/speed);
-                frame = getframe(gcf); %get frame
+                frame = getframe(gcf);
                 writeVideo(myVideo, frame);
             end
             close(myVideo)
@@ -70,8 +69,8 @@ function plotBehavior(ego, carsx, carsy, carspsi, name, speed, intersection)
 
             pause(.01);
 
-            myVideo = VideoWriter(name); %open video file
-            myVideo.FrameRate = 10;  %can adjust this, 5 - 10 works well for me
+            myVideo = VideoWriter(name);
+            myVideo.FrameRate = 10;
             open(myVideo);
 
             for c=1:length(ego)
@@ -82,7 +81,7 @@ function plotBehavior(ego, carsx, carsy, carspsi, name, speed, intersection)
                 xlim([-50+egoCar.Position(1) 50+egoCar.Position(1)]);
                 ylim([-20+egoCar.Position(2) 20+egoCar.Position(2)]);
                 pause(.05 * 1/speed);
-                frame = getframe(gcf); %get frame
+                frame = getframe(gcf);
                 writeVideo(myVideo, frame);
             end
             close(myVideo)
